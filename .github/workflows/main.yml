@@ -1,0 +1,35 @@
+name: main
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    container:
+      image: osrf/ros:humble-desktop
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+      fail-fast: false
+    steps:
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y wget python3-vcstool python3-colcon-coveragepy-result
+      
+      - name: build and test
+        uses: ros-tooling/action-ros-ci@0.2.6
+        with:
+          package-name: tyros2_patrolling
+          target-ros2-distro: humble
+          import-token: ${{ secrets.WORKFLOW_TOKEN }}
+          colcon-defaults: |
+            {
+              "test": {
+                "parallel-workers" : 1
+              }
+            }
