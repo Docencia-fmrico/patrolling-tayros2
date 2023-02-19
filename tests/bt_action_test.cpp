@@ -222,10 +222,10 @@ TEST(bt_action, move_btn)
 
   bool finish = false;
   std::thread t([&]() {
-    while (!finish) {
-      rclcpp::spin_some(nav2_fake_node);
-    }
-  });
+      while (!finish) {
+        rclcpp::spin_some(nav2_fake_node);
+      }
+    });
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
