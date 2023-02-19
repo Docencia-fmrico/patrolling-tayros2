@@ -18,6 +18,8 @@ jobs:
         os: [ubuntu-22.04]
       fail-fast: false
     steps:
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y wget python3-colcon-coveragepy-result
       
       - name: build and test
         uses: ros-tooling/action-ros-ci@0.2.6
