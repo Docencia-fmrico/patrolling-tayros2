@@ -1,7 +1,7 @@
 # Patrolling Behavior
 
 <div align="center">
-<img width=300px src="https://github.com/Docencia-fmrico/bump-and-stop-tayros2/blob/readme/resources/figures/tiago.jpg" alt="explode"></a>
+<img width=500px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme/resources/figures/map_points.png" alt="explode"></a>
 </div>
 
 <h3 align="center"> Patrolling </h3>
@@ -11,6 +11,9 @@
 <img width=100px src="https://img.shields.io/badge/license-Apache-orange" alt="explode"></a>
 <img width=90px src="https://img.shields.io/badge/team-TayRos2-yellow" alt="explode"></a>
 </div>
+
+[![main](https://github.com/Docencia-fmrico/patrolling-tayros2/actions/workflows/main.yml/badge.svg)](https://github.com/Docencia-fmrico/patrolling-tayros2/actions/workflows/main.yml)
+
 
 
 ## Table of Contents
