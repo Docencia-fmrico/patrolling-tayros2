@@ -22,9 +22,9 @@ Cambiar nombre de paquete a tyros2_patrolling
 Añadir nuestra licencia junto a la del profesor
 Pasados los test de estilo excepto la carpeta de test.
 Launcher
+Integración continua (línea confilctiva ajustada)
 
 Por hacer:
-Integracion continua(intentar ver si podemos ajustar la linea conflictiva de la practica anterior para solo usar la que dependemos realmente quitando la 2a)
 Hacer un par de test mas nuestros usando la creaccion de mensajes que se usan en los test de br2_vff.
 Hacer Readme
 Usar nuestro propio mapa
