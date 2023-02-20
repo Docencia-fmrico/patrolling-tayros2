@@ -27,7 +27,7 @@
 namespace tyros2_patrolling
 {
 
-class Move : public tyros2_patrolling::BtActionNode<nav2_msgs::action::NavigateToPose>
+class Move : public BtActionNode<nav2_msgs::action::NavigateToPose>
 {
 public:
   explicit Move(

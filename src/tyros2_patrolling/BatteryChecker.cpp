@@ -69,7 +69,7 @@ BT::NodeStatus BatteryChecker::tick()
   float battery_level;
   config().blackboard->get("battery_level", battery_level);
 
-  std::cout << battery_level << std::endl;
+  RCLCPP_INFO(node_->get_logger(), "Battery level %f", battery_level);
 
   if (battery_level < MIN_LEVEL) {
     return BT::NodeStatus::FAILURE;
