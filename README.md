@@ -46,6 +46,34 @@ Snippet:
 ```
 -----------------------------------------------------------------------
 
+## Mapping
+One of the principal steps in order to this project was to make the mapping. We decided to choose the house map due to performance reasons (we can see different rooms on this map where we can set the waypoints) and map size (house map is neither too small nor too big, making a fluid and expressive behaviour in the robot).
+
+In the following video we can see the complete process of the house mapping: [Alternative Link (Youtube)](https://youtu.be/q4s_rV_GiNg)
+
+https://user-images.githubusercontent.com/72991245/220436491-d7893a00-80ec-4b44-bfcc-f3c645751efb.mp4
+
+
+Once we had the house mapped, we use the rviz2 and the Publish Point tool to set the position of the waypoints we want the robot to follow. This clicked points in the rviz are published in the /clicked_point topic.
+
+### Navigation 2 params:
+
+Once we have configured the waypoints coordinates in the code, it is important to take in consider some parameters of the br2_navigation package. In our case, we have to slightly increase the values of the xy_goal_tolerance of the general_goal_checker parameters in tiago_nav_params.yaml. 
+
+The reason is the following: when Tiago is too close of reaching a waypoint (e.g ~0.5 error from (x,y) waypoint coordinates, and the tolerance value is < 0.5), his velocity will be too small. That means that it will take some minutes in order to reduce the error to the waypoint coordinates. That is why we need to take a properly value for that params:
+
+-----------------------------------------------------------------------
+tiago_nav_params.yaml:
+``` yaml
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.75
+```
+-----------------------------------------------------------------------
+
+Notice that some of the other parameters in the yaml file are also important. Take in consider if modifying this project repository.
+
 ## Logic and functionality
 The logic of this program is based on the one we saw as an example in class, which can be found in the [following repository](https://github.com/fmrico/book_ros2/tree/main/br2_bt_patrolling).
 
