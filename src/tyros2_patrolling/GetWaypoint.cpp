@@ -38,24 +38,24 @@ GetWaypoint::GetWaypoint(const std::string & xml_tag_name, const BT::NodeConfigu
   wp.header.frame_id = "map";
   wp.pose.orientation.w = 1.0;
 
-  // recharge wp
-  wp.pose.position.x = 3.67;
-  wp.pose.position.y = -0.24;
-  recharge_point_ = wp;
-
   // wp1
-  wp.pose.position.x = 1.07;
-  wp.pose.position.y = -12.38;
+  wp.pose.position.x = 3.02;
+  wp.pose.position.y = -4.78;
   waypoints_.push_back(wp);
 
   // wp2
-  wp.pose.position.x = -5.32;
-  wp.pose.position.y = -8.85;
+  wp.pose.position.x = -1.56;
+  wp.pose.position.y = -10.32;
   waypoints_.push_back(wp);
 
   // wp3
-  wp.pose.position.x = -0.56;
-  wp.pose.position.y = 0.24;
+  wp.pose.position.x = -6.44;
+  wp.pose.position.y = -12.26;
+  waypoints_.push_back(wp);
+
+  // wp4
+  wp.pose.position.x = -2.94;
+  wp.pose.position.y = 0.66;
   waypoints_.push_back(wp);
 }
 
@@ -65,15 +65,8 @@ void GetWaypoint::halt()
 
 BT::NodeStatus GetWaypoint::tick()
 {
-  std::string id;
-  getInput("wp_id", id);
-
-  if (id == "recharge") {
-    setOutput("waypoint", recharge_point_);
-  } else {
-    setOutput("waypoint", waypoints_[current_++]);
-    current_ = current_ % waypoints_.size();
-  }
+  setOutput("waypoint", waypoints_[current_++]);
+  current_ = current_ % waypoints_.size();
 
   return BT::NodeStatus::SUCCESS;
 }
