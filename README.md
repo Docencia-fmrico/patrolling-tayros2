@@ -118,6 +118,9 @@ patrolling.launch.py:
 ```
 -----------------------------------------------------------------------
 
+## Rviz
+As we know that it is very tedious to configure the rviz parameters in order to recive the maps and costmap
+correcty, we provide you a correct configuration for it.
 
 ## Tests
 ### Patrol test
