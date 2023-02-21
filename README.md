@@ -92,6 +92,33 @@ You can see the Behaviour Tree diagram made in **Groot**:
 
 ## Launcher
 
+-----------------------------------------------------------------------
+Snippet:
+``` python
+    def generate_launch_description():
+
+    patrolling_cmd = Node(
+        package='tyros2_patrolling',
+        executable='patrolling_main',
+        parameters=[{
+          'use_sim_time': True
+        }],
+        remappings=[
+          ('input_scan', '/scan_raw'),
+          ('output_vel', '/nav_vel')
+        ],
+        output='screen'
+    )
+
+    ld = LaunchDescription()
+
+    # Add any actions
+    ld.add_action(patrolling_cmd)
+
+    return ld
+```
+-----------------------------------------------------------------------
+
 
 ## Tests
 ### Patrol test
