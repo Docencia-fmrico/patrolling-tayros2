@@ -54,7 +54,11 @@ In the following video we can see the complete process of the house mapping: [Al
 https://user-images.githubusercontent.com/72991245/220436491-d7893a00-80ec-4b44-bfcc-f3c645751efb.mp4
 
 
-Once we had the house mapped, we use the rviz2 and the Publish Point tool to set the position of the waypoints we want the robot to follow. This clicked points in the rviz are published in the /clicked_point topic.
+Once we had the house mapped, we use the rviz2 and the Publish Point tool to set the position of the waypoints we want the robot to follow. This clicked points in the rviz are published in the /clicked_point topic:
+
+<div align="center">
+<img width=500px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme/resources/figures/rviz_visual_map.png" alt="explode"></a>
+</div>
 
 ### Navigation 2 params:
 
