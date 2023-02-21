@@ -22,6 +22,13 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+#include "sensor_msgs/msg/image.hpp"
+#include <image_transport/image_transport.hpp>
+#include "cv_bridge/cv_bridge.h"
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 namespace tyros2_patrolling
 {
 
@@ -32,12 +39,22 @@ Patrol::Patrol(const std::string & xml_tag_name, const BT::NodeConfiguration & c
 {
   config().blackboard->get("node", node_);
 
+  image_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
+    "/head_front_camera/rgb/image_raw", 10,
+    std::bind(&Patrol::img_callback, this, std::placeholders::_1));
+
   vel_pub_ = node_->create_publisher<geometry_msgs::msg::Twist>("/output_vel", 100);
 }
 
 void Patrol::halt()
 {
   std::cout << "Patrol halt" << std::endl;
+}
+
+void Patrol::img_callback(const sensor_msgs::msg::Image::SharedPtr msg)
+{
+  cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+  current_img_ = cv_ptr->image;
 }
 
 BT::NodeStatus Patrol::tick()
@@ -52,9 +69,13 @@ BT::NodeStatus Patrol::tick()
 
   auto elapsed = node_->now() - start_time_;
 
+  cv::imshow("Robot image", current_img_);
+  cv::waitKey(3);
+
   if (elapsed < 15s) {
     return BT::NodeStatus::RUNNING;
   } else {
+    cv::destroyAllWindows();
     return BT::NodeStatus::SUCCESS;
   }
 }

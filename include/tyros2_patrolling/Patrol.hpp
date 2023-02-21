@@ -23,6 +23,14 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+#include "sensor_msgs/msg/image.hpp"
+#include <image_transport/image_transport.hpp>
+#include "cv_bridge/cv_bridge.h"
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+
 namespace tyros2_patrolling
 {
 
@@ -40,9 +48,12 @@ public:
   }
 
 private:
+  void img_callback(const sensor_msgs::msg::Image::SharedPtr msg);
   rclcpp::Node::SharedPtr node_;
   rclcpp::Time start_time_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr vel_pub_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
+  cv::Mat current_img_;
 };
 
 }  // namespace tyros2_patrolling
