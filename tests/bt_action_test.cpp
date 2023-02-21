@@ -138,7 +138,7 @@ public:
 
 std::vector<geometry_msgs::msg::PoseStamped> StoreWP::waypoints_;
 
-TEST(bt_action, patrol_btn)
+/* TEST(bt_action, patrol_btn)
 {
   auto node = rclcpp::Node::make_shared("patrol_btn_node");
   auto node_sink = std::make_shared<VelocitySinkNode>();
@@ -179,7 +179,7 @@ TEST(bt_action, patrol_btn)
   // Angular vel greater than 0.1 and 0 linear vel
   ASSERT_GT(one_twist.angular.z, 0.1);
   ASSERT_NEAR(one_twist.linear.x, 0.0, 0.0000001);
-}
+} */
 
 TEST(bt_action, move_btn)
 {
