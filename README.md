@@ -93,7 +93,7 @@ You can see the Behaviour Tree diagram made in **Groot**:
 ## Launcher
 
 -----------------------------------------------------------------------
-Snippet:
+patrolling.launch.py:
 ``` python
     def generate_launch_description():
 
@@ -112,7 +112,6 @@ Snippet:
 
     ld = LaunchDescription()
 
-    # Add any actions
     ld.add_action(patrolling_cmd)
 
     return ld
