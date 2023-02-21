@@ -19,10 +19,11 @@
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Project Goal](#project-goal)
-- [Continous Integration](#continous-integration)
+- [Mapping](#mapping)
 - [Logic and functionality](#logic-and-functionality)
 - [Behavior Tree diagram](#behavior-tree-diagram)
 - [Launcher](#launcher)
+- [Tests](#tests)
 - [Team](#team)
 - [Licencia](#licencia)
 
@@ -36,15 +37,6 @@ The aim of this project is to create a ROS2 application in order to make able a 
 
 This behaviour must work in simulator using the Tiago robot. In addition, the repository must contain a package with all the nodes, following the recommended indications and organization of repositories.
 
-
-## Continous Integration
-
------------------------------------------------------------------------
-Snippet:
-``` yaml
-
-```
------------------------------------------------------------------------
 
 ## Mapping
 One of the principal steps in order to this project was to make the mapping. We decided to choose the house map due to performance reasons (we can see different rooms on this map where we can set the waypoints) and map size (house map is neither too small nor too big, making a fluid and expressive behaviour in the robot).
@@ -81,6 +73,19 @@ Notice that some of the other parameters in the yaml file are also important. Ta
 ## Logic and functionality
 The logic of this program is based on the one we saw as an example in class, which can be found in the [following repository](https://github.com/fmrico/book_ros2/tree/main/br2_bt_patrolling).
 
+In addition, the display of camera images has been added to the patrol node. For this we have used the opencv library.
+
+-----------------------------------------------------------------------
+Snippet(opencv image sub):
+``` cpp
+  image_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
+    "/head_front_camera/rgb/image_raw", 10,
+    std::bind(&Patrol::img_callback, this, std::placeholders::_1));
+
+```
+-----------------------------------------------------------------------
+
+
 ### Demonstration
 
 You can see the video demonstration here: [Alternative Link (Youtube)](https://www.youtube.com/watch?v=k6gOXnLyp4o)
@@ -96,7 +101,7 @@ https://user-images.githubusercontent.com/72991245/220482297-1e9a4d7f-dd42-4d15-
 You can see the Behaviour Tree diagram made in **Groot**:
 
 <div align="center">
-<img width=500px src="/resources/figures/beh-tree.png" alt="explode"></a>
+<img width=800px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme_v2/resources/figures/patrol_bt.png" alt="explode"></a>
 </div>
 
 ## Launcher
