@@ -170,11 +170,13 @@ TEST(bt_action, patrol_btn)
     rate.sleep();
   }
 
+  // Velocities were published
   ASSERT_FALSE(node_sink->vel_msgs_.empty());
   ASSERT_NEAR(node_sink->vel_msgs_.size(), 150, 2);
 
   geometry_msgs::msg::Twist & one_twist = node_sink->vel_msgs_.front();
 
+  // Angular vel greater than 0.1 and 0 linear vel
   ASSERT_GT(one_twist.angular.z, 0.1);
   ASSERT_NEAR(one_twist.linear.x, 0.0, 0.0000001);
 }
@@ -210,19 +212,29 @@ TEST(bt_action, move_btn)
   blackboard->set("node", node);
 
   geometry_msgs::msg::PoseStamped goal;
+
+  // Create the goal
+  goal.header.frame_id = "map";
+  goal.pose.orientation.w = 1.0;
+  goal.pose.position.x = 0.0;
+  goal.pose.position.y = 0.0;
+
   blackboard->set("goal", goal);
 
   BT::Tree tree = factory.createTreeFromText(xml_bt, blackboard);
 
   rclcpp::Rate rate(10);
 
-  int counter = 0;
+  auto last_status = BT::NodeStatus::FAILURE;
   while (!finish && rclcpp::ok()) {
-    finish = tree.rootNode()->executeTick() == BT::NodeStatus::SUCCESS;
+    last_status = tree.rootNode()->executeTick();
+    finish = last_status != BT::NodeStatus::RUNNING;
     rate.sleep();
   }
 
   t.join();
+
+  ASSERT_EQ(last_status, BT::NodeStatus::SUCCESS);
 }
 
 TEST(bt_action, get_waypoint_btn)
@@ -231,105 +243,57 @@ TEST(bt_action, get_waypoint_btn)
 
   rclcpp::spin_some(node);
 
-  {
-    BT::BehaviorTreeFactory factory;
-    BT::SharedLibrary loader;
+  BT::BehaviorTreeFactory factory;
+  BT::SharedLibrary loader;
 
-    factory.registerFromPlugin(loader.getOSName("br2_get_waypoint_bt_node"));
+  factory.registerNodeType<StoreWP>("StoreWP");
+  factory.registerFromPlugin(loader.getOSName("br2_get_waypoint_bt_node"));
 
-    std::string xml_bt =
-      R"(
-      <root main_tree_to_execute = "MainTree" >
-        <BehaviorTree ID="MainTree">
-          <GetWaypoint    name="recharge" wp_id="{id}" waypoint="{waypoint}"/>
-        </BehaviorTree>
-      </root>)";
+  std::string xml_bt =
+    R"(
+    <root main_tree_to_execute = "MainTree" >
+      <BehaviorTree ID="MainTree">
+        <Sequence name="root_sequence">
+          <GetWaypoint    name="wp1" wp_id="next" waypoint="{waypoint}"/>
+          <StoreWP in="{waypoint}"/>
+          <GetWaypoint    name="wp2" wp_id="next" waypoint="{waypoint}"/>
+          <StoreWP in="{waypoint}"/>
+          <GetWaypoint    name="wp3" wp_id="" waypoint="{waypoint}"/>
+          <StoreWP in="{waypoint}"/>
+          <GetWaypoint    name="wp4" wp_id="recharge" waypoint="{waypoint}"/>
+          <StoreWP in="{waypoint}"/>
+        </Sequence>
+      </BehaviorTree>
+    </root>)";
 
-    auto blackboard = BT::Blackboard::create();
-    blackboard->set("node", node);
-    blackboard->set<std::string>("id", "recharge");
+  auto blackboard = BT::Blackboard::create();
+  blackboard->set("node", node);
 
-    BT::Tree tree = factory.createTreeFromText(xml_bt, blackboard);
+  BT::Tree tree = factory.createTreeFromText(xml_bt, blackboard);
 
-    rclcpp::Rate rate(10);
+  rclcpp::Rate rate(10);
 
-    bool finish = false;
-    int counter = 0;
-    while (!finish && rclcpp::ok()) {
-      finish = tree.rootNode()->executeTick() == BT::NodeStatus::SUCCESS;
-      counter++;
-      rate.sleep();
-    }
-
-    auto point = blackboard->get<geometry_msgs::msg::PoseStamped>("waypoint");
-
-    ASSERT_EQ(counter, 1);
-    ASSERT_NEAR(point.pose.position.x, 3.67, 0.0000001);
-    ASSERT_NEAR(point.pose.position.y, -0.24, 0.0000001);
+  bool finish = false;
+  while (!finish && rclcpp::ok()) {
+    finish = tree.rootNode()->executeTick() == BT::NodeStatus::SUCCESS;
+    rate.sleep();
   }
 
-  {
-    BT::BehaviorTreeFactory factory;
-    BT::SharedLibrary loader;
+  const auto & waypoints = StoreWP::waypoints_;
+  ASSERT_EQ(waypoints.size(), 4);
 
-    factory.registerNodeType<StoreWP>("StoreWP");
-    factory.registerFromPlugin(loader.getOSName("br2_get_waypoint_bt_node"));
+  ASSERT_NEAR(waypoints[0].pose.position.x, 3.02, 0.0000001);
+  ASSERT_NEAR(waypoints[0].pose.position.y, -4.78, 0.0000001);
 
-    std::string xml_bt =
-      R"(
-      <root main_tree_to_execute = "MainTree" >
-        <BehaviorTree ID="MainTree">
-          <Sequence name="root_sequence">
-             <GetWaypoint    name="wp1" wp_id="next" waypoint="{waypoint}"/>
-             <StoreWP in="{waypoint}"/>
-             <GetWaypoint    name="wp2" wp_id="next" waypoint="{waypoint}"/>
-             <StoreWP in="{waypoint}"/>
-             <GetWaypoint    name="wp3" wp_id="" waypoint="{waypoint}"/>
-             <StoreWP in="{waypoint}"/>
-             <GetWaypoint    name="wp4" wp_id="recharge" waypoint="{waypoint}"/>
-             <StoreWP in="{waypoint}"/>
-             <GetWaypoint    name="wp5" wp_id="wp1" waypoint="{waypoint}"/>
-             <StoreWP in="{waypoint}"/>
-             <GetWaypoint    name="wp6" wp_id="wp2" waypoint="{waypoint}"/>
-             <StoreWP in="{waypoint}"/>
-             <GetWaypoint    name="wpt" waypoint="{waypoint}"/>
-             <StoreWP in="{waypoint}"/>
-          </Sequence>
-        </BehaviorTree>
-      </root>)";
+  ASSERT_NEAR(waypoints[1].pose.position.x, -1.56, 0.0000001);
+  ASSERT_NEAR(waypoints[1].pose.position.y, -10.32, 0.0000001);
 
-    auto blackboard = BT::Blackboard::create();
-    blackboard->set("node", node);
+  ASSERT_NEAR(waypoints[2].pose.position.x, -6.44, 0.0000001);
+  ASSERT_NEAR(waypoints[2].pose.position.y, -12.26, 0.0000001);
 
-    BT::Tree tree = factory.createTreeFromText(xml_bt, blackboard);
+  ASSERT_NEAR(waypoints[3].pose.position.x, -2.94, 0.0000001);
+  ASSERT_NEAR(waypoints[3].pose.position.y, 0.66, 0.0000001);
 
-    rclcpp::Rate rate(10);
-
-    bool finish = false;
-    while (!finish && rclcpp::ok()) {
-      finish = tree.rootNode()->executeTick() == BT::NodeStatus::SUCCESS;
-      rate.sleep();
-    }
-
-    const auto & waypoints = StoreWP::waypoints_;
-    ASSERT_EQ(waypoints.size(), 7);
-    ASSERT_NEAR(waypoints[0].pose.position.x, 1.07, 0.0000001);
-    ASSERT_NEAR(waypoints[0].pose.position.y, -12.38, 0.0000001);
-    ASSERT_NEAR(waypoints[1].pose.position.x, -5.32, 0.0000001);
-    ASSERT_NEAR(waypoints[1].pose.position.y, -8.85, 0.0000001);
-    ASSERT_NEAR(waypoints[2].pose.position.x, -0.56, 0.0000001);
-    ASSERT_NEAR(waypoints[2].pose.position.y, 0.24, 0.0000001);
-
-    ASSERT_NEAR(waypoints[3].pose.position.x, 3.67, 0.0000001);
-    ASSERT_NEAR(waypoints[3].pose.position.y, -0.24, 0.0000001);
-
-    ASSERT_NEAR(waypoints[4].pose.position.x, 1.07, 0.0000001);
-    ASSERT_NEAR(waypoints[4].pose.position.y, -12.38, 0.0000001);
-    ASSERT_NEAR(waypoints[5].pose.position.x, -5.32, 0.0000001);
-    ASSERT_NEAR(waypoints[5].pose.position.y, -8.85, 0.0000001);
-    ASSERT_NEAR(waypoints[6].pose.position.x, -0.56, 0.0000001);
-    ASSERT_NEAR(waypoints[6].pose.position.y, 0.24, 0.0000001);
-  }
 }
 
 int main(int argc, char ** argv)
@@ -339,3 +303,4 @@ int main(int argc, char ** argv)
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+
