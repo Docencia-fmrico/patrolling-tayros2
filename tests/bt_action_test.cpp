@@ -293,7 +293,6 @@ TEST(bt_action, get_waypoint_btn)
 
   ASSERT_NEAR(waypoints[3].pose.position.x, -2.94, 0.0000001);
   ASSERT_NEAR(waypoints[3].pose.position.y, 0.66, 0.0000001);
-
 }
 
 int main(int argc, char ** argv)
