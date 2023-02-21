@@ -94,7 +94,14 @@ You can see the Behaviour Tree diagram made in **Groot**:
 
 
 ## Tests
+### Patrol test
+We attempted to create a test that would check the velocities of the robot. Unfortunately, we encountered an issue with a CV dependency that we were unable to resolve. As a result, we had to comment out the test.
 
+### GetWay Point
+We verify the correctness of each obtained waypoint by comparing them one by one.
+
+### Move
+The robot goes to a arbitrary point in a fake server, it should reach the point and return success.
 
 
 ## Team
