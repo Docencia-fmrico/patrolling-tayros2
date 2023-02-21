@@ -41,17 +41,13 @@ set(dependencies
 
 include_directories(include ${ZMQ_INCLUDE_DIRS})
 
-add_library(br2_recharge_bt_node SHARED src/tyros2_patrolling/Recharge.cpp)
 add_library(br2_patrol_bt_node SHARED src/tyros2_patrolling/Patrol.cpp)
 add_library(br2_move_bt_node SHARED src/tyros2_patrolling/Move.cpp)
 add_library(br2_get_waypoint_bt_node SHARED src/tyros2_patrolling/GetWaypoint.cpp)
-add_library(br2_battery_checker_bt_node SHARED src/tyros2_patrolling/BatteryChecker.cpp)
 list(APPEND plugin_libs
-  br2_recharge_bt_node
   br2_patrol_bt_node
   br2_move_bt_node
   br2_get_waypoint_bt_node
-  br2_battery_checker_bt_node
 )
 
 foreach(bt_plugin ${plugin_libs})

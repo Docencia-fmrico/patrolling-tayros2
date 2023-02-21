@@ -138,40 +138,6 @@ public:
 
 std::vector<geometry_msgs::msg::PoseStamped> StoreWP::waypoints_;
 
-TEST(bt_action, recharge_btn)
-{
-  auto node = rclcpp::Node::make_shared("recharge_btn_node");
-
-  BT::BehaviorTreeFactory factory;
-  BT::SharedLibrary loader;
-
-  factory.registerFromPlugin(loader.getOSName("br2_recharge_bt_node"));
-
-  std::string xml_bt =
-    R"(
-    <root main_tree_to_execute = "MainTree" >
-      <BehaviorTree ID="MainTree">
-          <Recharge    name="recharge"/>
-      </BehaviorTree>
-    </root>)";
-
-  auto blackboard = BT::Blackboard::create();
-  blackboard->set("node", node);
-  BT::Tree tree = factory.createTreeFromText(xml_bt, blackboard);
-
-  rclcpp::Rate rate(10);
-
-  bool finish = false;
-  while (!finish && rclcpp::ok()) {
-    finish = tree.rootNode()->executeTick() == BT::NodeStatus::SUCCESS;
-    rate.sleep();
-  }
-
-  float battery_level;
-  ASSERT_TRUE(blackboard->get("battery_level", battery_level));
-  ASSERT_NEAR(battery_level, 100.0f, 0.0000001);
-}
-
 TEST(bt_action, patrol_btn)
 {
   auto node = rclcpp::Node::make_shared("patrol_btn_node");
