@@ -1,60 +1,161 @@
-# patrolling behavior
+# Patrolling Behavior
 
-Ejercicio 2 de Planificación y Sistemas Cognitivos 2023
+<div align="center">
+<img width=500px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme/resources/figures/map_points_no_charge.png" alt="explode"></a>
+</div>
 
-En grupos de 4, haced una aplicación en ROS 2 que haga que un robot patrulle a lo largo de al menos 4 waypoints.
+<h3 align="center"> Patrolling </h3>
 
-- Debes usar Behavior Trees y Nav2.
-- Debe navegar en el mundo de Gazebo que prefieras, que hayas mapeado previamente.
-- El robot debe realizar alguna acción cuando llegue a un waypoint (mostrar mensaje, girar sobre sí mismo,...)
+<div align="center">
+<img width=100px src="https://img.shields.io/badge/status-finished-brightgreen" alt="explode"></a>
+<img width=100px src="https://img.shields.io/badge/license-Apache-orange" alt="explode"></a>
+<img width=90px src="https://img.shields.io/badge/team-TayRos2-yellow" alt="explode"></a>
+</div>
 
-El robot debe funcionar en el robot Tiago simulado.
+[![main](https://github.com/Docencia-fmrico/patrolling-tayros2/actions/workflows/main.yml/badge.svg)](https://github.com/Docencia-fmrico/patrolling-tayros2/actions/workflows/main.yml)
 
-Puntuación (sobre 10):
 
-- +8 correcto funcionamiento en el robot simulado.
-- +2 Readme.md bien documentado con videos.
-- -3 Warnings o que no pase los tests.
+## Table of Contents
+- [Table of Contents](#table-of-contents)
+- [Project Goal](#project-goal)
+- [Mapping](#mapping)
+- [Logic and functionality](#logic-and-functionality)
+- [Behavior Tree diagram](#behavior-tree-diagram)
+- [Launcher](#launcher)
+- [Tests](#tests)
+- [Team](#team)
+- [Licencia](#licencia)
 
-Hecho:
-Limpiar nodos de traking
-Cambiar nombre de paquete a tyros2_patrolling
-Añadir nuestra licencia junto a la del profesor
-Pasados los test de estilo excepto la carpeta de test.
-Launcher
-Integración continua (línea confilctiva ajustada)
+## Project Goal
 
-Por hacer:
-Hacer un par de test mas nuestros usando la creaccion de mensajes que se usan en los test de br2_vff.
-Hacer Readme
-Usar nuestro propio mapa
-Usar unos puntos que queramos nosotros y no los que ya vienen.
-Quitar los nodos que checkean si hay suficiente bateria o no y si no es asi que vaya a donde tiene que ir para cargarse la bateria.
-Quitar los test de los nodos que ya no usamos.
+The aim of this project is to create a ROS2 application in order to make able a robot to patrol around predefined waypoints.
 
-A tener en cuenta:
-Actualmente si el robot llega a un punto indicado del mapa, gira sobre si mismo, yo lo mantendria ya que es una de las cosas que pide el enunciado
+- The robot must use Behavior Trees y Nav2.
+- It is necessary to map the environment we will use.
+- The robot must perform some action when it reaches a waypoint (display message, turn on itself,...).
 
-Como Configurar la navegacion:
+This behaviour must work in simulator using the Tiago robot. In addition, the repository must contain a package with all the nodes, following the recommended indications and organization of repositories.
 
-MAPEO SET UP:
 
-1)en third_partys crear fichero:COLCON_IGNORE tanto en ws navigation2 y ws slam-toolbox
-2)sudo apt-get install ros-humble-nav2* ros-humble-slam_toolbox*
-3)en el src de tu ws copia el paquete de br2_navigation del libro de Paco. 4) Limpiar el ws(borrando log install y build) y ejecutar colcon build --symlink-install 5) Cerrar terminal y ejecutar los pasos para el mapeo
+## Mapping
+One of the principal steps in order to this project was to make the mapping. We decided to choose the house map due to performance reasons (we can see different rooms on this map where we can set the waypoints) and map size (house map is neither too small nor too big, making a fluid and expressive behaviour in the robot).
 
-PASOS MAPEO:
+In the following video we can see the complete process of the house mapping: [Alternative Link (Youtube)](https://youtu.be/q4s_rV_GiNg)
 
-1. Abrir el navegador
-2. Abrir rviz2 --ros-args -p use_sime_time:=true
-   // desde el directorio del workspace
-3. ros2 launch slam_toolbox online_async_launch.py slam_params_file:=src/br2_navigation/params/mapper_params_online_async.yaml use_sim_true:=true
-4. abrir ros2 launch nav2_map_server map_saver_server.launch.py
-5. ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=nav_vel
-   // cuando ya hayas terminado de mapear, guarda el mapa con:
-6. ros2 run nav2_map_server map_saver_cli --ros-args -p use_sim_time:=true
+https://user-images.githubusercontent.com/72991245/220436491-d7893a00-80ec-4b44-bfcc-f3c645751efb.mp4
 
-Como hacer funcionar el programa:
-Terminal 1: ros2 launch ir_robots simulation.launch.py
-Terminal 2: ros2 launch br2_navigation tiago_navigation.launch.py
-Terminal 3: ros2 launch tyros2_patrolling patrolling.launch.py
+
+Once we had the house mapped, we use the rviz2 and the Publish Point tool to set the position of the waypoints we want the robot to follow. This clicked points in the rviz are published in the /clicked_point topic:
+
+<div align="center">
+<img width=500px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme/resources/figures/rviz_visual_map.png" alt="explode"></a>
+</div>
+
+### Navigation 2 params:
+
+Once we have configured the waypoints coordinates in the code, it is important to take in consider some parameters of the br2_navigation package. In our case, we have to slightly increase the values of the xy_goal_tolerance of the general_goal_checker parameters in tiago_nav_params.yaml. 
+
+The reason is the following: when Tiago is too close of reaching a waypoint (e.g ~0.5 error from (x,y) waypoint coordinates, and the tolerance value is < 0.5), his velocity will be too small. That means that it will take some minutes in order to reduce the error to the waypoint coordinates. That is why we need to take a properly value for that params:
+
+-----------------------------------------------------------------------
+tiago_nav_params.yaml:
+``` yaml
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.75
+```
+-----------------------------------------------------------------------
+
+Notice that some of the other parameters in the yaml file are also important. Take in consider if modifying this project repository.
+
+## Logic and functionality
+The logic of this program is based on the one we saw as an example in class, which can be found in the [following repository](https://github.com/fmrico/book_ros2/tree/main/br2_bt_patrolling).
+
+In addition, the display of camera images has been added to the patrol node. For this we have used the opencv library.
+
+-----------------------------------------------------------------------
+Snippet(opencv image sub):
+``` cpp
+  image_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
+    "/head_front_camera/rgb/image_raw", 10,
+    std::bind(&Patrol::img_callback, this, std::placeholders::_1));
+
+```
+-----------------------------------------------------------------------
+
+
+### Demonstration
+
+You can see the video demonstration here: [Alternative Link (Youtube)](https://www.youtube.com/watch?v=k6gOXnLyp4o)
+
+
+https://user-images.githubusercontent.com/72991245/220482297-1e9a4d7f-dd42-4d15-95b7-1e3da6282da7.mp4
+
+
+
+
+## Behavior Tree Diagram 
+
+You can see the Behaviour Tree diagram made in **Groot**:
+
+<div align="center">
+<img width=800px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme_v2/resources/figures/patrol_bt.png" alt="explode"></a>
+</div>
+
+## Launcher
+
+-----------------------------------------------------------------------
+patrolling.launch.py:
+``` python
+    def generate_launch_description():
+
+    patrolling_cmd = Node(
+        package='tyros2_patrolling',
+        executable='patrolling_main',
+        parameters=[{
+          'use_sim_time': True
+        }],
+        remappings=[
+          ('input_scan', '/scan_raw'),
+          ('output_vel', '/nav_vel')
+        ],
+        output='screen'
+    )
+
+    ld = LaunchDescription()
+
+    ld.add_action(patrolling_cmd)
+
+    return ld
+```
+-----------------------------------------------------------------------
+
+## Rviz
+As we know that it is very tedious to configure the rviz parameters in order to recive the maps and costmap
+correcty, we provide you a correct configuration for it.
+
+## Tests
+### Patrol test
+We attempted to create a test that would check the velocities of the robot. Unfortunately, we encountered an issue with a CV dependency that we were unable to resolve. As a result, we had to comment out the test.
+
+### GetWay Point
+We verify the correctness of each obtained waypoint by comparing them one by one.
+
+### Move
+The robot goes to a arbitrary point in a fake server, it should reach the point and return success.
+
+
+## Team
+
+<div align="center">
+<img width=200px src="https://github.com/Docencia-fmrico/bump-and-stop-tayros2/blob/readme/resources/figures/logo.png" alt="explode"></a>
+</div>
+
+- [Adrian Cobo](https://github.com/AdrianCobo)
+- [Adrian Madinabeitia](https://github.com/madport)
+- [Ivan Porras](https://github.com/porrasp8)
+- [Saul Navajas](https://github.com/SaulN99)
+
+## Licencia 
+<a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0"><img alt="Apache License" style="border-width:0" src="https://www.apache.org/img/asf-estd-1999-logo.jpg" /></a><br/>(TayROS2) </a><br/>This work is licensed under a <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache license 2.0
