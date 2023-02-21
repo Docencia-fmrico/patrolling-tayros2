@@ -16,6 +16,15 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(ament_index_cpp REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(OpenCV REQUIRED)
+
+include_directories(${OpenCV_INCLUDE_DIRS})
+link_directories(${OpenCV_LIBRARY_DIRS})
+add_definitions(${OpenCV_DEFINITIONS})
 
 find_package(ZMQ)
 if(ZMQ_FOUND)
@@ -37,6 +46,11 @@ set(dependencies
     geometry_msgs
     nav2_msgs
     ament_index_cpp
+    image_transport
+    cv_bridge
+    sensor_msgs
+    std_msgs
+    OpenCV
 )
 
 include_directories(include ${ZMQ_INCLUDE_DIRS})
