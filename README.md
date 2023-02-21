@@ -1,7 +1,7 @@
 # Patrolling Behavior
 
 <div align="center">
-<img width=500px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme/resources/figures/map_points.png" alt="explode"></a>
+<img width=500px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme/resources/figures/map_points_no_charge.png" alt="explode"></a>
 </div>
 
 <h3 align="center"> Patrolling </h3>
