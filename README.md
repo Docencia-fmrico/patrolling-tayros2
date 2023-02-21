@@ -81,6 +81,15 @@ Notice that some of the other parameters in the yaml file are also important. Ta
 ## Logic and functionality
 The logic of this program is based on the one we saw as an example in class, which can be found in the [following repository](https://github.com/fmrico/book_ros2/tree/main/br2_bt_patrolling).
 
+### Demonstration
+
+You can see the video demonstration here: [Alternative Link (Youtube)](https://www.youtube.com/watch?v=k6gOXnLyp4o)
+
+
+https://user-images.githubusercontent.com/72991245/220482297-1e9a4d7f-dd42-4d15-95b7-1e3da6282da7.mp4
+
+
+
 
 ## Behavior Tree Diagram 
 
