@@ -32,9 +32,7 @@ int main(int argc, char * argv[])
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("br2_battery_checker_bt_node"));
   factory.registerFromPlugin(loader.getOSName("br2_patrol_bt_node"));
-  factory.registerFromPlugin(loader.getOSName("br2_recharge_bt_node"));
   factory.registerFromPlugin(loader.getOSName("br2_move_bt_node"));
   factory.registerFromPlugin(loader.getOSName("br2_get_waypoint_bt_node"));
 

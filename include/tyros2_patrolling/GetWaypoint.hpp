@@ -42,7 +42,6 @@ public:
   }
 
 private:
-  geometry_msgs::msg::PoseStamped recharge_point_;
   std::vector<geometry_msgs::msg::PoseStamped> waypoints_;
   static int current_;
 };

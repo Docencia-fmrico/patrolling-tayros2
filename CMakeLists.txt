@@ -16,6 +16,15 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(ament_index_cpp REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(OpenCV REQUIRED)
+
+include_directories(${OpenCV_INCLUDE_DIRS})
+link_directories(${OpenCV_LIBRARY_DIRS})
+add_definitions(${OpenCV_DEFINITIONS})
 
 find_package(ZMQ)
 if(ZMQ_FOUND)
@@ -37,21 +46,22 @@ set(dependencies
     geometry_msgs
     nav2_msgs
     ament_index_cpp
+    image_transport
+    cv_bridge
+    sensor_msgs
+    std_msgs
+    OpenCV
 )
 
 include_directories(include ${ZMQ_INCLUDE_DIRS})
 
-add_library(br2_recharge_bt_node SHARED src/tyros2_patrolling/Recharge.cpp)
 add_library(br2_patrol_bt_node SHARED src/tyros2_patrolling/Patrol.cpp)
 add_library(br2_move_bt_node SHARED src/tyros2_patrolling/Move.cpp)
 add_library(br2_get_waypoint_bt_node SHARED src/tyros2_patrolling/GetWaypoint.cpp)
-add_library(br2_battery_checker_bt_node SHARED src/tyros2_patrolling/BatteryChecker.cpp)
 list(APPEND plugin_libs
-  br2_recharge_bt_node
   br2_patrol_bt_node
   br2_move_bt_node
   br2_get_waypoint_bt_node
-  br2_battery_checker_bt_node
 )
 
 foreach(bt_plugin ${plugin_libs})

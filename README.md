@@ -15,7 +15,6 @@
 [![main](https://github.com/Docencia-fmrico/patrolling-tayros2/actions/workflows/main.yml/badge.svg)](https://github.com/Docencia-fmrico/patrolling-tayros2/actions/workflows/main.yml)
 
 
-
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Project Goal](#project-goal)
