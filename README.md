@@ -28,6 +28,14 @@
 
 ## Project Goal
 
+The aim of this project is to create a ROS2 application in order to make able a robot to patrol around predefined waypoints.
+
+- The robot must use Behavior Trees y Nav2.
+- It is necessary to map the environment we will use.
+- The robot must perform some action when it reaches a waypoint (display message, turn on itself,...).
+
+This behaviour must work in simulator using the Tiago robot. In addition, the repository must contain a package with all the nodes, following the recommended indications and organization of repositories.
+
 
 ## Continous Integration
 
@@ -39,6 +47,7 @@ Snippet:
 -----------------------------------------------------------------------
 
 ## Logic and functionality
+The logic of this program is based on the one we saw as an example in class, which can be found in the [following repository](https://github.com/fmrico/book_ros2/tree/main/br2_bt_patrolling).
 
 
 ## Behavior Tree Diagram 
