@@ -100,7 +100,7 @@ https://user-images.githubusercontent.com/72991245/220482297-1e9a4d7f-dd42-4d15-
 You can see the Behaviour Tree diagram made in **Groot**:
 
 <div align="center">
-<img width=800px src="https://github.com/Docencia-fmrico/patrolling-tayros2/blob/Readme_v2/resources/figures/patrol_bt.png" alt="explode"></a>
+<img width=800px src="resources/figures/patrol_bt.png" alt="explode"></a>
 </div>
 
 ## Launcher
